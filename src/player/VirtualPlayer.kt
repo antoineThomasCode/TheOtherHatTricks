@@ -6,8 +6,8 @@ import game.Hand
 
 class VirtualPlayer(
 
-    override val name: String,
-    override var hand : Hand? = null
+    name: String,
+    hand : Hand? = null
 
 ) : Player(name, hand) {
 

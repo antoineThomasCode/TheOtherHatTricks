@@ -8,34 +8,32 @@ import kotlin.random.Random
 
 class Board(
 
-    val trickList: MutableList<TrickCard> = mutableListOf(),
-    val propCardList: MutableList<PropCard> = mutableListOf(),
+    private val trickList: MutableList<TrickCard> = mutableListOf(),
+    private val propCardList: MutableList<PropCard> = mutableListOf(),
     var theSeventThProp: PropCard? = null
 
 ) {
+    var visibleTrickyCard : TrickCard? = null
 
     init {
-        // construction de ma trick liste sur le plateau
-        propCardList.add(PropCard("The Rabbit", true))
-        propCardList.add(PropCard("The Other Rabbit", true))
-        propCardList.add(PropCard("Carrots", true))
-        propCardList.add(PropCard("Carrots", true))
-        propCardList.add(PropCard("Carrots", true))
-        propCardList.add(PropCard("The Lettuce", true))
-        propCardList.add(PropCard("The Hat", true))
+        propCardList.add(PropCard.Rabbit)
+        propCardList.add(PropCard.OtherRabbit)
+        propCardList.add(PropCard.Carrot)
+        propCardList.add(PropCard.Carrot)
+        propCardList.add(PropCard.Carrot)
+        propCardList.add(PropCard.Lettuce)
+        propCardList.add(PropCard.Hat)
 
-        // contruction de ma propcardlist sur le plateau
-        trickList.add(TrickCard("The Hungry Rabbit", true, 1))
-        trickList.add(TrickCard("The Bunch of Carrots", true, 2))
-        trickList.add(TrickCard("Vegetable Patch", true, 3))
-        trickList.add(TrickCard("The Rabbit That Didn't Like Carrot", true, 4))
-        trickList.add(TrickCard("The Pair Of Rabbits", true, 5))
-        trickList.add(TrickCard("The Vegetable Hat Trick", true, 2))
-        trickList.add(TrickCard("The Carrot Hat Trick", true, 3))
-        trickList.add(TrickCard("The Slighty Easier Hat Trick", true, 4))
-        trickList.add(TrickCard("The Hat Trick", true, 5))
-        trickList.add(TrickCard("The Other Hat Trick", true, 6))
-
+        trickList.add(TrickCard.HungryRabbit)
+        trickList.add(TrickCard.BunchOfCarrots)
+        trickList.add(TrickCard.VegetablePatch)
+        trickList.add(TrickCard.RabbitThatDidntLikeCarrot)
+        trickList.add(TrickCard.PairOfRabbits)
+        trickList.add(TrickCard.VegetableHatTrick)
+        trickList.add(TrickCard.CarrotHatTrick)
+        trickList.add(TrickCard.SlightlyEasierHatTrick)
+        trickList.add(TrickCard.HatTrick)
+        trickList.add(TrickCard.OtherHatTrick)
     }
 
     fun prepareBoard() {
@@ -52,14 +50,24 @@ class Board(
 
         propCardList.shuffle()
     }
+    fun returnLastTrickCard() {
+        if (trickList.isNotEmpty()) {
+            visibleTrickyCard = trickList.last()
+            trickList.removeAt(trickList.size - 1)
+        } else {
+            throw IllegalStateException("désolé la partie est fini, comptons les points")
+            // TODO implémentez ici la fin de game du coup c'est qu'on dépasser les 10 tours
+        }
+    }
 
     fun getHand(): Hand {
 
-        // Sélectionner et retirer la première carte (isHidden = true)
+        // gère la logique ici pour distribuer les cartes dans les hand des joueurs mais avec toujours une carte à l'endroit et une à l'envers
+        // 1ere carte
         val firstCardIndex = Random.nextInt(propCardList.size)
         val firstCard = propCardList.removeAt(firstCardIndex)
 
-        // Sélectionner et préparer la deuxième carte (isHidden = false)
+        // 2ème carte
         val secondCardIndex = Random.nextInt(propCardList.size)
         val secondCard = propCardList[secondCardIndex].apply { isHidden = false }
         propCardList.removeAt(secondCardIndex)
@@ -68,6 +76,7 @@ class Board(
     }
 
     fun setupSeventThProp() {
+        // quand il reste une caret après distribution alors je l'utilise comme 7eme PropCard
         if (propCardList.size == 1) {
             theSeventThProp = propCardList.first()
         } else {

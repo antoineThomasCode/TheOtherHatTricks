@@ -4,8 +4,6 @@ import player.Player
 import java.awt.Image
 
 abstract class Card(
-    open val title: String,
-    open var isHidden: Boolean
-) {
-
-}
+    val title: String,
+    var isHidden: Boolean // j'ai du repasser en public car j'en ai besoin dans ma Class Board
+)
