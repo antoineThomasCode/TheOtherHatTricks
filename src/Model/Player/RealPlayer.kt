@@ -1,7 +1,7 @@
-package player
+package Model.Player
 
-import card.PropCard
-import game.Hand
+import Model.Player.Hand
+import Model.Player.Player
 
 class RealPlayer(
     name: String,

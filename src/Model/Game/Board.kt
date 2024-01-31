@@ -1,8 +1,9 @@
-package game
+package Model.Game
 
-import card.Card
-import card.PropCard
-import card.TrickCard
+import Model.Card.TrickCard
+import Model.Player.Hand
+import Model.Card.PropCard
+import Model.Player.Player
 import kotlin.random.Random
 
 
@@ -16,6 +17,7 @@ class Board(
     var visibleTrickyCard : TrickCard? = null
 
     init {
+        // TODO
         propCardList.add(PropCard.Rabbit)
         propCardList.add(PropCard.OtherRabbit)
         propCardList.add(PropCard.Carrot)
@@ -60,20 +62,30 @@ class Board(
         }
     }
 
-    fun getHand(): Hand {
+    fun getHand(players : List<Player>) {
 
-        // gère la logique ici pour distribuer les cartes dans les hand des joueurs mais avec toujours une carte à l'endroit et une à l'envers
-        // 1ere carte
-        val firstCardIndex = Random.nextInt(propCardList.size)
-        val firstCard = propCardList.removeAt(firstCardIndex)
+        propCardList.shuffle()
+        if (propCardList.size < 2) {
+            throw IllegalStateException("Pas assez de cartes pour distribuer une main")
+        }
+        players.forEach { player ->
+            val hiddenCard = propCardList.removeAt(0).apply { isHidden = true }
+            val visibleCard = propCardList.removeAt(0).apply { isHidden = false }
+            println("voici les cartes de ${player.name}")
+            println(hiddenCard.title)
+            println(hiddenCard.isHidden)
+            println(visibleCard.title)
+            println(visibleCard.isHidden)
 
-        // 2ème carte
-        val secondCardIndex = Random.nextInt(propCardList.size)
-        val secondCard = propCardList[secondCardIndex].apply { isHidden = false }
-        propCardList.removeAt(secondCardIndex)
 
-        return Hand(firstCard, secondCard)
+            player.hand = Hand(hiddenCard, visibleCard)
+
+        }
+
+
+
     }
+
 
     fun setupSeventThProp() {
         // quand il reste une caret après distribution alors je l'utilise comme 7eme PropCard

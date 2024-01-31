@@ -1,8 +1,7 @@
-package player
+package Model.Player
 
-import card.PropCard
-import card.TrickCard
-import game.Hand
+import Model.Player.Hand
+import Model.Player.Player
 
 class VirtualPlayer(
 
