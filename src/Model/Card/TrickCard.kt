@@ -1,78 +1,85 @@
 package Model.Card
 
-sealed class TrickCard(
-    title: String,
-    isHidden: Boolean = true,  // isHidden est optionnel et a une valeur par défaut
+enum class TrickCard(
+    val title: String,
     val value: Int,
-    val combinationFirstPart: List<PropCard>,
-    val combinationSecondPart: List<PropCard>
-) : Card(title, isHidden) {
+    val combinationFirstPart: Pair<PropCard, PropCard?>,
+    val combinationSecondPart: Pair<PropCard, PropCard?>
+) {
 
-    // Exemple d'objet TrickCard
-    object HungryRabbit : TrickCard(
+
+    HUNGRYRABBIT(
         title = "The Hungry Rabbit",
         value = 1,
-        combinationFirstPart = listOf(PropCard.Rabbit, PropCard.OtherRabbit),
-        combinationSecondPart = listOf(PropCard.Lettuce, PropCard.Carrot)
-    )
-
-
-
-    object BunchOfCarrots : TrickCard(
+        combinationFirstPart = Pair(PropCard.RABBIT, PropCard.OTHERRABBIT),
+        combinationSecondPart = Pair(PropCard.LETTUCE, PropCard.CARROTS)
+    ),
+    BUNCHOFCARROTS(
         "The Bunch of Carrots",
         value = 2,
-        combinationFirstPart = listOf(PropCard.Carrot),
-        combinationSecondPart = listOf(PropCard.Carrot)
-    )
-    object VegetablePatch : TrickCard(
+        combinationFirstPart = Pair(PropCard.CARROTS, null),
+        combinationSecondPart = Pair(PropCard.CARROTS, null)
+    ),
+
+    VEGETABLEPATCH(
         "Vegetable Patch",
         value = 3,
-        combinationFirstPart = listOf(PropCard.Carrot),
-        combinationSecondPart = listOf(PropCard.Lettuce)
-    )
-    object RabbitThatDidntLikeCarrot :
-        TrickCard("The Rabbit That Didn't Like Carrot",
-            value = 4,
-            combinationFirstPart = listOf(PropCard.Rabbit, PropCard.OtherRabbit),
-            combinationSecondPart = listOf(PropCard.Lettuce)
-        )
+        combinationFirstPart = Pair(PropCard.CARROTS, null),
+        combinationSecondPart = Pair(PropCard.LETTUCE, null)
+    ),
+    RABBITTHATDIDNTLIKECARROTS(
+        "The Rabbit That Didn't Like Carrot",
+        value = 4,
+        combinationFirstPart = Pair(PropCard.RABBIT, PropCard.OTHERRABBIT),
+        combinationSecondPart = Pair(PropCard.LETTUCE, null)
+    ),
 
-     object PairOfRabbits : TrickCard(
+    PAIROFRABBIT(
         "The Pair Of Rabbits",
         value = 5,
-        combinationFirstPart = listOf(PropCard.Rabbit),
-        combinationSecondPart = listOf(PropCard.OtherRabbit)
-    )
-    object VegetableHatTrick : TrickCard(
+        combinationFirstPart = Pair(PropCard.RABBIT, null),
+        combinationSecondPart = Pair(PropCard.OTHERRABBIT, null)
+    ),
+    VEGETABLEHATTRICK(
         "The Vegetable Hat Trick",
-        true,
         value = 2,
-        combinationFirstPart = listOf(PropCard.Rabbit, PropCard.OtherRabbit),
-        combinationSecondPart = listOf(PropCard.Lettuce, PropCard.Carrot)
-    )
-    object CarrotHatTrick : TrickCard(
+        combinationFirstPart = Pair(PropCard.RABBIT, PropCard.OTHERRABBIT),
+        combinationSecondPart = Pair(PropCard.LETTUCE, PropCard.CARROTS)
+    ),
+    CARROTHATTRICK(
         "The Carrot Hat Trick",
         value = 3,
-        combinationFirstPart = listOf(PropCard.Hat),
-        combinationSecondPart = listOf(PropCard.Lettuce, PropCard.Carrot)
-    )
-    object SlightlyEasierHatTrick :
-        TrickCard("The Slighty Easier Hat Trick",
-            value = 4,
-            combinationFirstPart = listOf(PropCard.Hat),
-            combinationSecondPart = listOf(PropCard.Rabbit, PropCard.OtherRabbit)
-        )
+        combinationFirstPart = Pair(PropCard.HAT, null),
+        combinationSecondPart = Pair(PropCard.LETTUCE, PropCard.CARROTS)
+    ),
+    SLIGHTLYEASIERHATTRICK(
+        "The Slighty Easier Hat Trick",
+        value = 4,
+        combinationFirstPart = Pair(PropCard.HAT, null),
+        combinationSecondPart = Pair(PropCard.RABBIT, PropCard.OTHERRABBIT)
+    ),
 
-    object HatTrick : TrickCard(
+    HATTRICK(
         "The Hat Trick",
         value = 5,
-        combinationFirstPart = listOf(PropCard.Hat),
-        combinationSecondPart = listOf(PropCard.Rabbit)
-    )
-    object OtherHatTrick : TrickCard(
+        combinationFirstPart = Pair(PropCard.HAT, null),
+        combinationSecondPart = Pair(PropCard.RABBIT, null)
+    ),
+
+    OTHERHATTRICK(
         "The Other Hat Trick",
         value = 6,
-        combinationFirstPart = listOf(PropCard.Hat),
-        combinationSecondPart = listOf(PropCard.OtherRabbit)
-    )
+        combinationFirstPart = Pair(PropCard.HAT, null),
+        combinationSecondPart = Pair(PropCard.OTHERRABBIT, null)
+    );
+
+    companion object {
+        fun getTrickDeck(): MutableList<TrickCard> {
+            val trickDeck: MutableList<TrickCard> = entries.toMutableList()
+            trickDeck.remove(OTHERHATTRICK)
+            trickDeck.shuffle()
+            trickDeck.add(0, OTHERHATTRICK)
+            return trickDeck
+        }
+    }
 }

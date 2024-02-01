@@ -8,6 +8,9 @@ class RealPlayer(
     hand: Hand? = null
 ) : Player(name, hand) {
 
-
+    fun printPlayerHand () {
+        println(hand!!.propCardOne.title)
+        println(hand!!.propCardTwo.title)
+    }
 
 }
