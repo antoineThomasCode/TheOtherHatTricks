@@ -4,14 +4,13 @@ import Controller.PlayerController
 import Model.Card.PropCard
 import Model.Player.Player
 import Model.Player.RealPlayer
-import Model.Player.VirtualPlayer
-import javax.swing.text.StyledEditorKit.BoldAction
 
 
 class Game(
     val players: MutableList<Player> = mutableListOf(),
     private val board: Board
 ) {
+    var forfeitCounter = 0
     fun setupGame(playerController: PlayerController) {
         playerController.startPlayerCreation()
         PropCard.dealCard(players, board)
@@ -21,41 +20,32 @@ class Game(
         var gameIsFinished = false
         while (!gameIsFinished) {
             players.forEach { player ->
-                playTour(player)
+                if (player is RealPlayer) {
+                    player.playTour(this, board)
+                }
                 gameIsFinished = checkIfGameIsFinished(gameIsFinished, player)
             }
         }
     }
 
-    private fun playTour(player: Player) {
 
-        println(" ${player.name} c'est à votre tour de jouer !")
-
-        if (player is RealPlayer) {
-            println("Voici vos cartes :")
-            player.printPlayerHand()
-            println("La carte de tour ${board.announceVisibleTourCard()}")
-            println("Pour marquez les point de ce tour vous devez coupler les accessoires suivant :")
-        }
-        if (player is VirtualPlayer) {
-            // TODO implémenter la logique pour l'IA
-        }
-
-
-    }
-
-    private fun checkIfGameIsFinished(gameIsFinish : Boolean, player: Player): Boolean {
+    private fun checkIfGameIsFinished(gameIsFinish: Boolean, player: Player): Boolean {
         if (player.name == "Antoine") {
             println("la partie est terminée")
             return !gameIsFinish
         }
+        if (forfeitCounter == 3) {
+            return !gameIsFinish
+        }
+        // the other hat trick condition or trickDeck is empty
         return gameIsFinish
     }
 
     fun stopGame() {
 
     }
-    fun createPlayer (player: Player) : Player? {
+
+    fun createPlayer(player: Player): Player? {
         if (players.size < 3) {
             players.add(player)
             return player
@@ -63,7 +53,8 @@ class Game(
             return null
         }
     }
-    fun isPlayerAllCreated () : Boolean {
+
+    fun isPlayerAllCreated(): Boolean {
         return players.size == 3
     }
 
