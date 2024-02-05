@@ -1,31 +1,23 @@
 package Model.Game
 
+import Controller.PlayerController
 import Model.Card.PropCard
 import Model.Player.Player
 import Model.Player.RealPlayer
 import Model.Player.VirtualPlayer
+import javax.swing.text.StyledEditorKit.BoldAction
 
 
 class Game(
-    protected val players: MutableList<Player> = mutableListOf(),
+    val players: MutableList<Player> = mutableListOf(),
     private val board: Board
 ) {
-    fun setupGame() {
-        for (i in 1..3) {
-            println("Entrez le nom du joueur $i (ou 'IA' pour ajouter un joueur virtuel) :")
-            val playerName = readLine()
-
-            val player = if (playerName.equals("IA", ignoreCase = true)) {
-                VirtualPlayer("Joueur IA $i")
-            } else {
-                RealPlayer(playerName ?: "Joueur $i")
-            }
-            players.add(player)
-        }
+    fun setupGame(playerController: PlayerController) {
+        playerController.startPlayerCreation()
         PropCard.dealCard(players, board)
     }
 
-    fun startGame() {
+    fun startGame(playerController: PlayerController) {
         var gameIsFinished = false
         while (!gameIsFinished) {
             players.forEach { player ->
@@ -38,11 +30,15 @@ class Game(
     private fun playTour(player: Player) {
 
         println(" ${player.name} c'est à votre tour de jouer !")
-        println("Voici vos cartes :")
+
         if (player is RealPlayer) {
+            println("Voici vos cartes :")
             player.printPlayerHand()
             println("La carte de tour ${board.announceVisibleTourCard()}")
-
+            println("Pour marquez les point de ce tour vous devez coupler les accessoires suivant :")
+        }
+        if (player is VirtualPlayer) {
+            // TODO implémenter la logique pour l'IA
         }
 
 
@@ -50,6 +46,7 @@ class Game(
 
     private fun checkIfGameIsFinished(gameIsFinish : Boolean, player: Player): Boolean {
         if (player.name == "Antoine") {
+            println("la partie est terminée")
             return !gameIsFinish
         }
         return gameIsFinish
@@ -57,6 +54,17 @@ class Game(
 
     fun stopGame() {
 
+    }
+    fun createPlayer (player: Player) : Player? {
+        if (players.size < 3) {
+            players.add(player)
+            return player
+        } else {
+            return null
+        }
+    }
+    fun isPlayerAllCreated () : Boolean {
+        return players.size == 3
     }
 
 }

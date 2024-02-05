@@ -1,0 +1,4 @@
+package View
+
+interface BoardCommandInterface {
+}

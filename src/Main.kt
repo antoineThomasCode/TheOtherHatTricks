@@ -1,12 +1,18 @@
+import Controller.PlayerController
+import Controller.userAction.PlayerAction
 import Model.Game.Board
 import Model.Game.Game
+import View.PlayerView
 
 
-object Main fun main() {
+fun main() {
+
 
     val game = Game(board = Board())
-
-    game.setupGame()
-    game.startGame()
+    val playerController = PlayerController(game)
+    val playerView = PlayerView(playerController)
+    playerController.setPlayerViewCommand(playerView)
+    game.setupGame(playerController)
+    game.startGame(playerController)
 
 }

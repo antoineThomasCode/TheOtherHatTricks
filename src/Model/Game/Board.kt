@@ -17,4 +17,6 @@ class Board() {
 
     fun announceVisibleTourCard() = trickDeck[trickDeck.size - 1].title
 
+
+
 }
