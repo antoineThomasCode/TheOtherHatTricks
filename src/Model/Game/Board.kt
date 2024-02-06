@@ -4,14 +4,12 @@ import Model.Card.PropCard
 import Model.Card.TrickCard
 
 
-class Board() {
-    private val trickDeck: MutableList<TrickCard> = TrickCard.getTrickDeck()
+class Board(
+    private var theSeventhProp: PropCard
+) {
+    val trickDeck: MutableList<TrickCard> = TrickCard.getTrickDeck()
     private val trickPile: MutableList<TrickCard> = mutableListOf(trickDeck.removeLast())
-    var theSeventThProp: PropCard? = null
-    fun setupBoard() {
-
-
-    }
+//    private var theSeventhProp = theSeventhProp
 
     fun piocheTrick() = trickDeck.removeLast()
 

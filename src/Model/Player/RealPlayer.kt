@@ -34,7 +34,6 @@ class RealPlayer(
 
             when (playerChoice) {
                 1 -> {
-
                     println("Vous avez choisi de jouer ce tour.")
                     return
                 }
@@ -61,7 +60,7 @@ class RealPlayer(
         println("Laquelle de vos cartes souhaitez-vous échanger : 1. ${hand!!.propCardOne.title} ou 2. ${hand!!.propCardTwo.title}")
         val playerCardChoice = readLine()?.toIntOrNull()
 
-        // Liste les autres joueurs disponibles pour l'échange
+
         val otherPlayers = game.players.filter { it != this }
         println("Avec quel joueur souhaitez-vous échanger votre carte ?")
         otherPlayers.forEachIndexed { index, player ->
@@ -70,8 +69,10 @@ class RealPlayer(
         val otherPlayerChoice = readLine()?.toIntOrNull()
         val otherPlayer = otherPlayers.getOrNull(otherPlayerChoice!! - 1)
 
+        val otherPlayerCardOneDescription = if (!otherPlayer?.hand?.propCardOne?.isHidden!!) otherPlayer.hand?.propCardOne?.title else "carte retournée"
+        val otherPlayerCardTwoDescription = if (!otherPlayer.hand?.propCardTwo?.isHidden!!) otherPlayer.hand?.propCardTwo?.title else "carte retournée"
 
-        println("Quelle carte de ${otherPlayer?.name} souhaitez-vous échanger : 1. ou 2.")
+        println("Quelle carte de ${otherPlayer?.name} souhaitez-vous échanger : 1. $otherPlayerCardOneDescription ou 2. $otherPlayerCardTwoDescription")
         val otherPlayerCardChoice = readLine()?.toIntOrNull()
 
 
@@ -90,6 +91,21 @@ class RealPlayer(
             println("Échange effectué.")
             printPlayerHand()
         }
+    }
+    fun performTrick(game: Game, board: Board, player: Player ) {
+        // annoncer le Trick possible
+        // demander si le joueur veut perform le Trick
+        // --> Si oui voir si success
+        // --> sinon forfeit
+        // regarder si la carte est "the other hat trick"
+    }
+    fun forfeitTrick (player: Player, board: Board, game: Game){
+
+        // appliquer la péalité au joueur
+        // si les deux carte de la hand sont à isHidden = true
+        // demander au user de choisir la carte à retourner
+        // si l'une des cartes est à isHidden = false alors retourner l'autre carte
+        // si les deux carte de la HAND sont isHidden à false -> return
     }
 
 

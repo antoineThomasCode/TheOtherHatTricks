@@ -23,7 +23,7 @@ enum class PropCard(
 
     companion object {
 
-        fun dealCard(players: List<Player>, board: Board) {
+        fun dealCard(players: List<Player>): PropCard {
 
             val cardPile = entries.toMutableList()
             cardPile.shuffle()
@@ -34,7 +34,7 @@ enum class PropCard(
                 player.hand = Hand(firstCard, secondCard)
             }
 
-            board.theSeventThProp = cardPile.firstOrNull()
+            return cardPile.first()
         }
     }
 }
