@@ -20,7 +20,7 @@ class Board() {
 
     fun announceTourCardCombinations() {
         val visibleCard = trickDeck[trickDeck.size - 1]
-        println("Pour marquez les points de ce tour vous devez coupler les accessoires suivant :")
+        println("Pour marquez les ${visibleCard.value} points de ce tour vous devez coupler les accessoires suivant :")
         visibleCard.combinationFirstPart.first.let {
             println(it.title)
         }

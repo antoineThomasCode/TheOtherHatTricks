@@ -6,8 +6,7 @@ import View.PlayerView
 
 
 fun main() {
-
-
+    
     val game = Game(board = Board())
     val playerController = PlayerController(game)
     val playerView = PlayerView(playerController)
