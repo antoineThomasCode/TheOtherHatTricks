@@ -17,8 +17,12 @@ enum class PropCard(
     LETTUCE("The Lettuce", true),
     HAT("The Hat", true);
 
-    fun isSameCard(otherCard: PropCard): Boolean {
-        return this.title == otherCard.title
+    override fun toString(): String {
+        return title
+    }
+
+    fun isSameCard(otherCard: PropCard?): Boolean {
+        return this.title == otherCard?.title
     }
 
     companion object {

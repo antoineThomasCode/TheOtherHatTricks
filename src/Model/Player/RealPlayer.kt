@@ -8,24 +8,23 @@ class RealPlayer(
     hand: Hand? = null
 ) : Player(name, hand) {
 
-    fun playTour(game: Game, board: Board) {
+    override fun playTour(game: Game, board: Board): Boolean {
 
         println("${name} c'est à votre tour de jouer !")
         printPlayerHand()
         board.announceVisibleTourCard()
-        board.announceTourCardCombinations()
-        chooseATrick(game, board)
-        prepareProps(game, board)
-
+        return super.playTour(game, board)
     }
 
     private fun printPlayerHand() {
+        println("")
         println("Voici vos cartes :")
-        println(hand!!.propCardOne.title)
-        println(hand!!.propCardTwo.title)
+        println("    " + hand!!.propCardOne)
+        println("    " + hand!!.propCardTwo)
     }
 
-    private fun chooseATrick(game: Game, board: Board) {
+    override fun chooseTrick(game: Game, board: Board) {
+        println("")
         var playerChoice: Int
         do {
             println("Voulez-vous : 1. jouer ce tour / 2. piocher un autre tour")
@@ -39,10 +38,11 @@ class RealPlayer(
                 }
 
                 2 -> {
+                    println()
                     println("Vous avez choisi de piocher un autre tour.")
-                    board.piocheTrick()
+                    board.swapTrick()
                     board.announceVisibleTourCard()
-                    board.announceTourCardCombinations()
+//                    board.announceTourCardCombinations()
                     return
                 }
 
@@ -54,10 +54,11 @@ class RealPlayer(
         } while (playerChoice !in 1..2)
 
     }
-    fun prepareProps(game: Game, board: Board) {
-        println("Vous allez devoir échanger l'une de vos cartes avec l'un de vos adversaires.")
 
-        println("Laquelle de vos cartes souhaitez-vous échanger : 1. ${hand!!.propCardOne.title} ou 2. ${hand!!.propCardTwo.title}")
+    override fun prepareProps(game: Game, board: Board) {
+//        println("Vous allez devoir échanger l'une de vos cartes avec l'un de vos adversaires.")
+        println()
+        println("Quelle carte souhaitez-vous échanger avec un autre joueur : 1. ${hand!!.propCardOne.title} ou 2. ${hand!!.propCardTwo.title}")
         val playerCardChoice = readLine()?.toIntOrNull()
 
 
@@ -69,8 +70,10 @@ class RealPlayer(
         val otherPlayerChoice = readLine()?.toIntOrNull()
         val otherPlayer = otherPlayers.getOrNull(otherPlayerChoice!! - 1)
 
-        val otherPlayerCardOneDescription = if (!otherPlayer?.hand?.propCardOne?.isHidden!!) otherPlayer.hand?.propCardOne?.title else "carte retournée"
-        val otherPlayerCardTwoDescription = if (!otherPlayer.hand?.propCardTwo?.isHidden!!) otherPlayer.hand?.propCardTwo?.title else "carte retournée"
+        val otherPlayerCardOneDescription =
+            if (!otherPlayer?.hand?.propCardOne?.isHidden!!) otherPlayer.hand?.propCardOne?.title else "carte retournée"
+        val otherPlayerCardTwoDescription =
+            if (!otherPlayer.hand?.propCardTwo?.isHidden!!) otherPlayer.hand?.propCardTwo?.title else "carte retournée"
 
         println("Quelle carte de ${otherPlayer?.name} souhaitez-vous échanger : 1. $otherPlayerCardOneDescription ou 2. $otherPlayerCardTwoDescription")
         val otherPlayerCardChoice = readLine()?.toIntOrNull()
@@ -79,9 +82,11 @@ class RealPlayer(
         if (playerCardChoice != null && otherPlayer != null && otherPlayerCardChoice != null) {
             val temp = if (playerCardChoice == 1) hand!!.propCardOne else hand!!.propCardTwo
             if (playerCardChoice == 1) {
-                hand!!.propCardOne = if (otherPlayerCardChoice == 1) otherPlayer.hand!!.propCardOne else otherPlayer.hand!!.propCardTwo
+                hand!!.propCardOne =
+                    if (otherPlayerCardChoice == 1) otherPlayer.hand!!.propCardOne else otherPlayer.hand!!.propCardTwo
             } else {
-                hand!!.propCardTwo = if (otherPlayerCardChoice == 1) otherPlayer.hand!!.propCardOne else otherPlayer.hand!!.propCardTwo
+                hand!!.propCardTwo =
+                    if (otherPlayerCardChoice == 1) otherPlayer.hand!!.propCardOne else otherPlayer.hand!!.propCardTwo
             }
             if (otherPlayerCardChoice == 1) {
                 otherPlayer.hand!!.propCardOne = temp
@@ -92,22 +97,70 @@ class RealPlayer(
             printPlayerHand()
         }
     }
-    fun performTrick(game: Game, board: Board, player: Player ) {
-        // annoncer le Trick possible
-        // demander si le joueur veut perform le Trick
-        // --> Si oui voir si success
-        // --> sinon forfeit
-        // regarder si la carte est "the other hat trick"
+
+    override fun performTrick(board: Board): Boolean {
+        println("Vous êtes maintenant prêt pour marquer le tour !")
+        println("Voulez-vous tenter de marquer (1) ou annoncer votre échec (2) ?")
+
+        var choice: Int
+        val input = readLine()
+        choice = input?.toIntOrNull() ?: 0
+
+        when (choice) {
+            1 -> {
+                if (board.getVisibleTrick().performTrick(hand!!) > 0) {
+                    println("Félicitations ! Vous avez réussi le tour.")
+
+//                    Récupérer le nombre de point
+                    //  TODO implémenter le passe passe
+                    return true
+                } else {
+                    //                    Récupérer le nombre de point
+                    println("Malheureusement, vous n'avez pas les cartes necessaires pour marquer ce tour")
+                    forfeitTrick()
+                    return false
+                }
+            }
+
+            2 -> {
+
+                println("Vous avez annoncé votre échec pour ce tour.")
+                forfeitTrick()
+                return true
+
+            }
+
+            else -> {
+                println("Choix invalide. Veuillez choisir (1) pour tenter de marquer ou (2) pour annoncer votre échec.")
+                return performTrick(board = board)
+            }
+        }
     }
-    fun forfeitTrick (player: Player, board: Board, game: Game){
 
-        // appliquer la péalité au joueur
-        // si les deux carte de la hand sont à isHidden = true
-        // demander au user de choisir la carte à retourner
-        // si l'une des cartes est à isHidden = false alors retourner l'autre carte
-        // si les deux carte de la HAND sont isHidden à false -> return
+    private fun forfeitTrick() {
+
+        val cardOneIsHidden = hand!!.propCardOne.isHidden
+        val cardTwoIsHidden = hand!!.propCardTwo.isHidden
+
+        when {
+
+            !cardOneIsHidden && !cardTwoIsHidden -> {
+                println("Choisissez une carte à retourner : 1. ${hand!!.propCardOne.title} ou 2. ${hand!!.propCardTwo.title}")
+                var choice: Int
+                do {
+                    val input = readlnOrNull()
+                    choice = input?.toIntOrNull() ?: 0
+                } while (choice !in 1..2)
+
+                if (choice == 1) hand!!.propCardOne.isHidden = true else hand!!.propCardTwo.isHidden = true
+            }
+
+            cardOneIsHidden != cardTwoIsHidden -> {
+                if (cardOneIsHidden) hand!!.propCardOne.isHidden = false else hand!!.propCardTwo.isHidden = false
+                println("La carte cachée a été retournée.")
+            }
+
+            else -> println("Vos deux cartes sont déjà visibles, la pénalité ne s'applique pas pour ce tour")
+        }
     }
-
-
-
 }

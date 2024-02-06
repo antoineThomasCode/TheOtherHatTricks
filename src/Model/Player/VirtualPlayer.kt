@@ -1,5 +1,7 @@
 package Model.Player
 
+import Model.Game.Board
+import Model.Game.Game
 import Model.Player.Hand
 import Model.Player.Player
 
@@ -10,23 +12,20 @@ class VirtualPlayer(
 
 ) : Player(name, hand) {
 
-    fun play() {
-        // faire ici toute les étapes une à une d'un "tour" de joueur
+
+    override fun playTour(game: Game, board: Board): Boolean {
+        TODO("Not yet implemented")
     }
 
-    private fun chooseAction() {
-
+    override fun performTrick(board: Board): Boolean {
+        TODO("Not yet implemented")
     }
 
-     fun selectCardToExchange() {
-
-         // sert à avoir une carte aléatoire à échanger faire attention à bine prendre une carte qui à le meme isHidden (revoir exactement dans les règles)
-
+    override fun prepareProps(game: Game, board: Board) {
+        TODO("Not yet implemented")
     }
 
-    private fun makeTrickChoice(): Boolean {
-
-        // savoir aléatoirement à mon avis si on marque le trick ou non
-        return true
+    override fun chooseTrick(game: Game, board: Board) {
+        TODO("Not yet implemented")
     }
 }

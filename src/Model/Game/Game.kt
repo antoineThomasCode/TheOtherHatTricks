@@ -1,6 +1,7 @@
 package Model.Game
 
 import Model.Card.PropCard
+import Model.Card.TrickCard
 import Model.Player.Player
 import Model.Player.RealPlayer
 import Model.Player.VirtualPlayer
@@ -11,6 +12,33 @@ class Game {
     val players: MutableList<Player> = createPlayers()
 
     private val board = Board(theSeventhProp = PropCard.dealCard(players))
+
+
+    fun startGame() {
+        var theOtherHatTrickForfeit = 0
+        while (theOtherHatTrickForfeit < 3) {
+            players.forEach { player ->
+
+                println()
+                println("________________________________________________")
+                println("______________   JOUEUR SUIVANT   ______________")
+                println("________________________________________________")
+
+                val isSuccess = player.playTour(this, board)
+
+                if (board.getVisibleTrick() == TrickCard.OTHERHATTRICK) {
+                    if (isSuccess) {
+                        return
+                    } else if (theOtherHatTrickForfeit == 2) {
+                        return
+                    } else {
+                        theOtherHatTrickForfeit++
+                    }
+                }
+            }
+        }
+    }
+
 
     private fun createPlayers(): MutableList<Player> {
         val players = mutableListOf<Player>()
@@ -29,44 +57,6 @@ class Game {
             }
         }
         return players
-
-    }
-
-
-    fun startGame() {
-        var gameIsFinished = false
-        while (!gameIsFinished) {
-            players.forEach { player ->
-                if (player is RealPlayer) {
-                    player.playTour(this, board)
-                }
-                gameIsFinished = checkIfGameIsFinished(gameIsFinished, player)
-                println("________________________________________________")
-                println("______________   JOUEUR SUIVANT   ______________")
-                println("________________________________________________")
-            }
-        }
-    }
-
-
-    fun checkIfGameIsFinished(gameIsFinish: Boolean, player: Player): Boolean {
-        if (player.name == "Antoine") {
-            println("_______________________")
-            println("la partie est terminée")
-            println("_______________________")
-            return !gameIsFinish
-        }
-
-        return gameIsFinish
-    }
-
-    fun stopGame() {
-
-    }
-
-
-    fun isPlayerAllCreated(): Boolean {
-        return players.size == 3
     }
 
 }

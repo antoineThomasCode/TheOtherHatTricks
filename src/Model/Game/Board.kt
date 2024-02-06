@@ -2,6 +2,7 @@ package Model.Game
 
 import Model.Card.PropCard
 import Model.Card.TrickCard
+import Model.Player.Player
 
 
 class Board(
@@ -11,30 +12,10 @@ class Board(
     private val trickPile: MutableList<TrickCard> = mutableListOf(trickDeck.removeLast())
 //    private var theSeventhProp = theSeventhProp
 
-    fun piocheTrick() = trickDeck.removeLast()
+    fun swapTrick() = trickPile.add(trickDeck.removeLast())
+
+    fun getVisibleTrick() = trickPile.last()
 
     fun announceVisibleTourCard() =
-        println("La carte de tour est actuellement : ${trickDeck[trickDeck.size - 1].title}")
-
-    fun announceTourCardCombinations() {
-        val visibleCard = trickDeck[trickDeck.size - 1]
-        println("Pour marquez les ${visibleCard.value} points de ce tour vous devez coupler les accessoires suivant :")
-        visibleCard.combinationFirstPart.first.let {
-            println(it.title)
-        }
-        visibleCard.combinationFirstPart.second?.let {
-            println("ou\n${it.title}")
-        }
-
-        println("et")
-
-        visibleCard.combinationSecondPart.first.let {
-            println(it.title)
-        }
-        visibleCard.combinationSecondPart.second?.let {
-            println("ou\n${it.title}")
-        }
-    }
-
-
+        println("\nLa carte de tour est actuellement : ${trickDeck[trickDeck.size - 1]}")
 }
