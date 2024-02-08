@@ -29,7 +29,7 @@ class RealPlayer(
         do {
             println("Voulez-vous : 1. jouer ce tour / 2. piocher un autre tour")
             val input = readLine() ?: ""
-            playerChoice = input.toIntOrNull() ?: 0 // Convertit l'entrée en Int, 0 si conversion échoue
+            playerChoice = input.toIntOrNull() ?: 0
 
             when (playerChoice) {
                 1 -> {
@@ -42,7 +42,6 @@ class RealPlayer(
                     println("Vous avez choisi de piocher un autre tour.")
                     board.swapTrick()
                     board.announceVisibleTourCard()
-//                    board.announceTourCardCombinations()
                     return
                 }
 
@@ -56,7 +55,7 @@ class RealPlayer(
     }
 
     override fun prepareProps(game: Game, board: Board) {
-//        println("Vous allez devoir échanger l'une de vos cartes avec l'un de vos adversaires.")
+
         println()
         println("Quelle carte souhaitez-vous échanger avec un autre joueur : 1. ${hand!!.propCardOne.title} ou 2. ${hand!!.propCardTwo.title}")
         val playerCardChoice = readLine()?.toIntOrNull()
@@ -79,7 +78,7 @@ class RealPlayer(
         val otherPlayerCardChoice = readLine()?.toIntOrNull()
 
 
-        if (playerCardChoice != null && otherPlayer != null && otherPlayerCardChoice != null) {
+        if (playerCardChoice != null && otherPlayerCardChoice != null) {
             val temp = if (playerCardChoice == 1) hand!!.propCardOne else hand!!.propCardTwo
             if (playerCardChoice == 1) {
                 hand!!.propCardOne =
@@ -111,11 +110,11 @@ class RealPlayer(
                 if (board.getVisibleTrick().performTrick(hand!!) > 0) {
                     println("Félicitations ! Vous avez réussi le tour.")
 
-//                    Récupérer le nombre de point
-                    //  TODO implémenter le passe passe
+                    this.score += board.getVisibleTrick().value
+                    sleightOfHand(board)
                     return true
                 } else {
-                    //                    Récupérer le nombre de point
+
                     println("Malheureusement, vous n'avez pas les cartes necessaires pour marquer ce tour")
                     forfeitTrick()
                     return false
@@ -163,4 +162,34 @@ class RealPlayer(
             else -> println("Vos deux cartes sont déjà visibles, la pénalité ne s'applique pas pour ce tour")
         }
     }
+
+    fun sleightOfHand(board: Board) {
+        val hand = this.hand
+        val seventhProp = board.theSeventhProp
+
+        println("Les deux cartes de votre main sont : 1. ${hand!!.propCardOne.title} et 2. ${hand.propCardTwo.title}")
+        println("La 7ème carte est : ${seventhProp.title} (carte cachée)")
+
+        println("Choisissez les deux cartes à garder (ex : '1 3' pour garder la première carte de votre main et la 7ème carte) :")
+        var choices: List<Int>
+        do {
+            val input = readLine()
+            choices = input?.split(" ")?.mapNotNull { it.toIntOrNull() }?.filter { it in 1..3 } ?: listOf()
+        } while (choices.size != 2 || choices.distinct().size != 2)
+
+        val newHand = when (choices.sorted()) {
+            listOf(1, 2) -> Hand(hand.propCardOne, hand.propCardTwo)
+            listOf(1, 3) -> Hand(hand.propCardOne, seventhProp.apply { isHidden = true })
+            listOf(2, 3) -> Hand(hand.propCardTwo, seventhProp.apply { isHidden = true })
+            else -> hand
+        }
+        this.hand = newHand
+        if (!choices.contains(3)) {
+            board.theSeventhProp = if (choices.contains(1)) hand.propCardTwo else hand.propCardOne
+        }
+
+        println("Échange effectué. Les cartes de votre main sont maintenant : 1. ${this.hand!!.propCardOne.title} (cachée : ${this.hand!!.propCardOne.isHidden}) et 2. ${this.hand!!.propCardTwo.title} (cachée : ${this.hand!!.propCardTwo.isHidden})")
+
+    }
+
 }
