@@ -18,6 +18,10 @@ class Game {
         var theOtherHatTrickForfeit = 0
         while (theOtherHatTrickForfeit < 3) {
             players.forEach { player ->
+                if (board.trickDeck.isEmpty()) {
+                    stopGame()
+                    return
+                }
 
                 println()
                 println("________________________________________________")
@@ -35,6 +39,7 @@ class Game {
                         theOtherHatTrickForfeit++
                     }
                 }
+
             }
         }
     }
@@ -57,6 +62,12 @@ class Game {
             }
         }
         return players
+    }
+
+    private fun stopGame() {
+        println("La partie est terminée")
+
+        println("Voici les scores : ")
     }
 
 }

@@ -12,8 +12,15 @@ class Board(
 
     fun swapTrick() = trickPile.add(trickDeck.removeLast())
 
-    fun getVisibleTrick() = trickPile.last()
+    fun getVisibleTrick(): TrickCard? = trickPile.lastOrNull()
 
-    fun announceVisibleTourCard() =
-        println("\nLa carte de tour est actuellement : ${trickDeck[trickDeck.size - 1]}")
+
+    fun announceVisibleTourCard() {
+        if (trickDeck.isEmpty()) {
+            println("\nIl n'y a plus de cartes.")
+        } else {
+            println("\nLa carte de tour est actuellement : ${trickDeck.last()}")
+        }
+    }
+
 }

@@ -107,10 +107,10 @@ class RealPlayer(
 
         when (choice) {
             1 -> {
-                if (board.getVisibleTrick().performTrick(hand!!) > 0) {
+                if (board.getVisibleTrick()?.performTrick(hand!!)!! > 0) {
                     println("Félicitations ! Vous avez réussi le tour.")
 
-                    this.score += board.getVisibleTrick().value
+                    this.score += board.getVisibleTrick()!!.value
                     sleightOfHand(board)
                     return true
                 } else {
