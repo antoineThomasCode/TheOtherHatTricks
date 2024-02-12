@@ -64,10 +64,13 @@ class Game {
         return players
     }
 
-    private fun stopGame() {
+     fun stopGame() {
         println("La partie est terminée")
 
         println("Voici les scores : ")
+        players.forEach { player ->
+            println("${player.name} : ${player.score}")
+        }
     }
 
 }

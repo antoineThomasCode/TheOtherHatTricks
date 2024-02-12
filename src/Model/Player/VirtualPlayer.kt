@@ -15,10 +15,6 @@ class VirtualPlayer(
         return super.playTour(game, board)
     }
 
-    private fun printPlayerHand() {
-        println("")
-
-    }
 
     override fun chooseTrick(game: Game, board: Board) {
         println("")
@@ -35,7 +31,7 @@ class VirtualPlayer(
                 2 -> {
                     println()
                     board.swapTrick()
-                    board.announceVisibleTourCard()
+                    board.announceVisibleTourCard(game)
                     return
                 }
 
@@ -51,8 +47,6 @@ class VirtualPlayer(
 
         println()
         val playerCardChoice = Random.nextInt(1, 3)
-
-
         val otherPlayers = game.players.filter { it != this }
 
         val otherPlayerChoice = Random.nextInt(1, 3)
@@ -89,7 +83,6 @@ class VirtualPlayer(
             1 -> {
                 if (board.getVisibleTrick()?.performTrick(hand!!)!! > 0) {
                     println("L'IA avez réussi le tour.")
-
                     this.score += board.getVisibleTrick()!!.value
                     sleightOfHand(board)
                     return true
@@ -117,24 +110,28 @@ class VirtualPlayer(
 
     private fun forfeitTrick() {
 
-        val cardOneIsHidden = hand!!.propCardOne.isHidden
-        val cardTwoIsHidden = hand!!.propCardTwo.isHidden
 
         when {
 
-            !cardOneIsHidden && !cardTwoIsHidden -> {
+            hand!!.propCardOne.isHidden && hand!!.propCardTwo.isHidden -> {
 
                 var choice: Int
                 do {
                     choice = Random.nextInt(1, 3)
                 } while (choice !in 1..2)
 
-                if (choice == 1) hand!!.propCardOne.isHidden = true else hand!!.propCardTwo.isHidden = true
+                if (choice == 1) hand!!.propCardOne.isHidden = false else hand!!.propCardTwo.isHidden = false
+                println("Suite à l'échec du tour, une carte de l'IA à été retournée")
             }
 
-            cardOneIsHidden != cardTwoIsHidden -> {
-                if (cardOneIsHidden) hand!!.propCardOne.isHidden = false else hand!!.propCardTwo.isHidden = false
+            !hand!!.propCardTwo.isHidden && hand!!.propCardOne.isHidden -> {
+                hand!!.propCardOne.isHidden = false
+                println("Une carte cachée a été retournée.")
+            }
 
+            !hand!!.propCardOne.isHidden && hand!!.propCardTwo.isHidden -> {
+                hand!!.propCardTwo.isHidden = false
+                println("Une carte cachée a été retournée.")
             }
 
             else -> println("la pénalité ne s'applique pas car les deux cartes de L'ia sont visibles ")
@@ -151,10 +148,6 @@ class VirtualPlayer(
 
             choices += Random.nextInt(1, 4)
         }
-        do {
-            val input = readLine()
-            choices = input?.split(" ")?.mapNotNull { it.toIntOrNull() }?.filter { it in 1..3 } ?: listOf()
-        } while (choices.size != 2 || choices.distinct().size != 2)
 
         val newHand = when (choices.sorted()) {
             listOf(1, 2) -> Hand(hand!!.propCardOne, hand.propCardTwo)
@@ -166,6 +159,7 @@ class VirtualPlayer(
         if (!choices.contains(3)) {
             board.theSeventhProp = if (choices.contains(1)) hand!!.propCardTwo else hand!!.propCardOne
         }
+        println("je suis dans le pass pass IA")
 
 
     }

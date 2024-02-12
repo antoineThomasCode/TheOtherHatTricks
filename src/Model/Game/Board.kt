@@ -15,9 +15,10 @@ class Board(
     fun getVisibleTrick(): TrickCard? = trickPile.lastOrNull()
 
 
-    fun announceVisibleTourCard() {
+    fun announceVisibleTourCard(game: Game) {
         if (trickDeck.isEmpty()) {
             println("\nIl n'y a plus de cartes.")
+            game.stopGame()
         } else {
             println("\nLa carte de tour est actuellement : ${trickDeck.last()}")
         }

@@ -12,7 +12,7 @@ class RealPlayer(
 
         println("${name} c'est à votre tour de jouer !")
         printPlayerHand()
-        board.announceVisibleTourCard()
+        board.announceVisibleTourCard(game)
         return super.playTour(game, board)
     }
 
@@ -41,7 +41,7 @@ class RealPlayer(
                     println()
                     println("Vous avez choisi de piocher un autre tour.")
                     board.swapTrick()
-                    board.announceVisibleTourCard()
+                    board.announceVisibleTourCard(game)
                     return
                 }
 
@@ -109,7 +109,6 @@ class RealPlayer(
             1 -> {
                 if (board.getVisibleTrick()?.performTrick(hand!!)!! > 0) {
                     println("Félicitations ! Vous avez réussi le tour.")
-
                     this.score += board.getVisibleTrick()!!.value
                     sleightOfHand(board)
                     return true
@@ -138,12 +137,10 @@ class RealPlayer(
 
     private fun forfeitTrick() {
 
-        val cardOneIsHidden = hand!!.propCardOne.isHidden
-        val cardTwoIsHidden = hand!!.propCardTwo.isHidden
 
         when {
 
-            !cardOneIsHidden && !cardTwoIsHidden -> {
+            hand!!.propCardOne.isHidden && hand!!.propCardTwo.isHidden -> {
                 println("Choisissez une carte à retourner : 1. ${hand!!.propCardOne.title} ou 2. ${hand!!.propCardTwo.title}")
                 var choice: Int
                 do {
@@ -151,11 +148,16 @@ class RealPlayer(
                     choice = input?.toIntOrNull() ?: 0
                 } while (choice !in 1..2)
 
-                if (choice == 1) hand!!.propCardOne.isHidden = true else hand!!.propCardTwo.isHidden = true
+                if (choice == 1) hand!!.propCardOne.isHidden = false else hand!!.propCardTwo.isHidden = false
             }
 
-            cardOneIsHidden != cardTwoIsHidden -> {
-                if (cardOneIsHidden) hand!!.propCardOne.isHidden = false else hand!!.propCardTwo.isHidden = false
+            !hand!!.propCardTwo.isHidden && hand!!.propCardOne.isHidden -> {
+                hand!!.propCardOne.isHidden = false
+                println("La carte cachée a été retournée.")
+            }
+
+            !hand!!.propCardOne.isHidden && hand!!.propCardTwo.isHidden -> {
+                hand!!.propCardTwo.isHidden = false
                 println("La carte cachée a été retournée.")
             }
 
@@ -163,7 +165,7 @@ class RealPlayer(
         }
     }
 
-    fun sleightOfHand(board: Board) {
+    private fun sleightOfHand(board: Board) {
         val hand = this.hand
         val seventhProp = board.theSeventhProp
 
